@@ -65,6 +65,10 @@ if [ $? -eq 0 ]; then
         echo ""
         echo "如果提示无法打开，运行以下命令："
         echo "  xattr -cr ~/Desktop/$OUTPUT_APP_NAME"
+        echo ""
+        echo "🧹 清理构建目录..."
+        rm -rf "$OUTPUT_DIR"
+        echo "✅ 构建目录已删除"
     else
         echo "❌ 错误：找不到构建的应用文件"
         exit 1
