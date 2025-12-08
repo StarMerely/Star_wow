@@ -22,13 +22,35 @@ class MenuBarManager: ObservableObject {
     }
     
     func setupMenuBar() {
+        // 确保在主线程创建状态栏图标
+        if Thread.isMainThread {
+            createStatusItem()
+        } else {
+            DispatchQueue.main.sync {
+                createStatusItem()
+            }
+        }
+    }
+    
+    private func createStatusItem() {
         // 创建状态栏图标
+        guard statusItem == nil else { return }
+        
         statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
         
-        if let button = statusItem?.button {
-            // 设置图标（使用系统图标）
+        guard let statusItem = statusItem, let button = statusItem.button else {
+            print("⚠️ 无法创建状态栏图标")
+            return
+        }
+        
+        // 设置图标（兼容低版本系统）
+        if #available(macOS 11.0, *) {
+            // macOS 11+ 使用 SF Symbols
             button.image = NSImage(systemSymbolName: "gamecontroller.fill", accessibilityDescription: "Star WoW")
             button.image?.isTemplate = true
+        } else {
+            // macOS 10.x 使用文本或自定义图标
+            button.title = "🎮"
         }
         
         updateMenu()
